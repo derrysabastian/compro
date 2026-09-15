@@ -1,0 +1,9 @@
+const header=document.querySelector('.site-header');
+addEventListener('scroll',()=>header.classList.toggle('scrolled',scrollY>40));
+const menu=document.querySelector('.menu-toggle'),links=document.querySelector('.nav-links');
+menu.addEventListener('click',()=>{links.classList.toggle('open');menu.setAttribute('aria-expanded',links.classList.contains('open'))});
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));
+document.querySelectorAll('[data-count]').forEach(el=>{const obs=new IntersectionObserver(es=>{if(es[0].isIntersecting){let n=0,max=+el.dataset.count;const timer=setInterval(()=>{n+=Math.ceil(max/25);if(n>=max){n=max;clearInterval(timer)}el.textContent=n},35);obs.disconnect()}},{threshold:1});obs.observe(el)});
+document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.project-card').forEach(card=>card.style.display=btn.dataset.filter==='all'||card.dataset.filter===btn.dataset.filter?'block':'none')}));
+const contactForm=document.querySelector('.contact-form');if(contactForm)contactForm.addEventListener('submit',e=>{e.preventDefault();const data=new FormData(e.target);const msg=`Halo Sabar Renovation,\nNama: ${data.get('name')}\nNo. WhatsApp: ${data.get('phone')}\nLokasi proyek: ${data.get('location')}\nKebutuhan: ${data.get('need')}`;window.open(`https://wa.me/6285793365019?text=${encodeURIComponent(msg)}`,'_blank');e.target.querySelector('.form-status').textContent='Pesan siap dikirim ke WhatsApp Sabar Renovation.'});
