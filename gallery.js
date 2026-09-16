@@ -11,7 +11,7 @@ document.querySelectorAll("[data-filter]").forEach((button) =>
       const show =
         button.dataset.filter === "all" ||
         item.dataset.category === button.dataset.filter;
-      item.style.display = show ? "block" : "none";
+      item.classList.toggle("filter-hidden", !show);
       if (show) total++;
     });
     count.textContent = total;

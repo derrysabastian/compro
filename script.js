@@ -1,7 +1,12 @@
 const header = document.querySelector(".site-header");
-addEventListener("scroll", () =>
-  header.classList.toggle("scrolled", scrollY > 40),
-);
+const floatingWa = document.querySelector(".floating-wa");
+const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+addEventListener("scroll", () => {
+  header.classList.toggle("scrolled", scrollY > 40);
+  floatingWa?.classList.toggle("visible", scrollY > innerHeight * 0.65);
+  if (!prefersReducedMotion)
+    document.documentElement.style.setProperty("--hero-shift", `${Math.min(scrollY * 0.12, 90)}px`);
+}, { passive: true });
 const menu = document.querySelector(".menu-toggle"),
   links = document.querySelector(".nav-links");
 menu.addEventListener("click", () => {
@@ -21,9 +26,12 @@ const observer = new IntersectionObserver(
         observer.unobserve(e.target);
       }
     }),
-  { threshold: 0.12 },
+  { threshold: 0.12, rootMargin: "0px 0px -8%" },
 );
-document.querySelectorAll(".reveal").forEach((e) => observer.observe(e));
+document.querySelectorAll(".reveal").forEach((e, i) => {
+  e.style.setProperty("--reveal-delay", `${Math.min(i % 5, 4) * 70}ms`);
+  observer.observe(e);
+});
 document.querySelectorAll("[data-count]").forEach((el) => {
   const obs = new IntersectionObserver(
     (es) => {
@@ -51,16 +59,10 @@ document.querySelectorAll("[data-filter]").forEach((btn) =>
       .querySelectorAll("[data-filter]")
       .forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    document
-      .querySelectorAll(".project-card,.squeeze-slide")
-      .forEach(
-        (card) =>
-          (card.style.display =
-            btn.dataset.filter === "all" ||
-            card.dataset.filter === btn.dataset.filter
-              ? ""
-              : "none"),
-      );
+    document.querySelectorAll(".project-card,.squeeze-slide").forEach((card) => {
+      const show = btn.dataset.filter === "all" || card.dataset.category === btn.dataset.filter;
+      card.classList.toggle("filter-hidden", !show);
+    });
   }),
 );
 const contactForm = document.querySelector(".contact-form");
